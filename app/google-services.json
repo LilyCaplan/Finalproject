@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "380685069971",
+    "firebase_url": "https://shar-2abcd.firebaseio.com",
+    "project_id": "shar-2abcd",
+    "storage_bucket": "shar-2abcd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380685069971:android:55d7124acd40819e",
+        "android_client_info": {
+          "package_name": "com.example.shar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "380685069971-gaf9cvv41hhs5d0e7r1adv4jcbpldsqe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA96fScIziVOczpFhR6mvuzACxlS1jeV0A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
