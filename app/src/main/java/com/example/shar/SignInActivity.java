@@ -34,6 +34,7 @@ public class SignInActivity extends AppCompatActivity implements
     private TextView mStatusTextView;
     private TextView mDetailTextView;
     private EditText mEmailField;
+    private EditText mUserName;
     private EditText mPasswordField;
     private Context mContext;
     private DatabaseReference mDatabase;
@@ -51,12 +52,13 @@ public class SignInActivity extends AppCompatActivity implements
         setContentView(R.layout.sign_in_activity);
 
         mContext = this;
-        //mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Views
         mStatusTextView = findViewById(R.id.status);
         mDetailTextView = findViewById(R.id.detail);
         mEmailField = findViewById(R.id.fieldEmail);
+        mUserName = findViewById(R.id.fieldUserName);
         mPasswordField = findViewById(R.id.fieldPassword);
 
         // Buttons
@@ -82,7 +84,7 @@ public class SignInActivity extends AppCompatActivity implements
     }
     // [END on_start_check_user]
 
-    private void createAccount(String email, String password) {
+    private void createAccount(String email, String username,  String password) {
         Log.d(TAG, "createAccount:" + email);
         if (!validateForm()) {
             return;
@@ -103,6 +105,7 @@ public class SignInActivity extends AppCompatActivity implements
                             //String userID = user.getUid();
 
                             //mDatabase.child("users").child(userID).setValue(user);
+                            mDatabase.child(user.getUid()).push().setValue(username);
 
 
                             Intent intent = new Intent(mContext, LinkLoader.class);
@@ -124,7 +127,7 @@ public class SignInActivity extends AppCompatActivity implements
         // [END create_user_with_email]
     }
 
-    private void signIn(String email, String password) {
+    private void signIn(String email, String username, String password) {
         Log.d(TAG, "signIn:" + email);
         if (!validateForm()) {
             return;
@@ -142,6 +145,7 @@ public class SignInActivity extends AppCompatActivity implements
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+                            mDatabase.child(user.getUid()).push().setValue(username);
 
                             Intent intent = new Intent(mContext, LinkLoader.class);
                             intent.putExtra(USER_KEY , user.getUid() );
@@ -215,6 +219,14 @@ public class SignInActivity extends AppCompatActivity implements
             mEmailField.setError(null);
         }
 
+        String username = mUserName.getText().toString();
+        if (TextUtils.isEmpty(username)) {
+            mUserName.setError("Required.");
+            valid = false;
+        } else {
+            mUserName.setError(null);
+        }
+
         String password = mPasswordField.getText().toString();
         if (TextUtils.isEmpty(password)) {
             mPasswordField.setError("Required.");
@@ -252,9 +264,9 @@ public class SignInActivity extends AppCompatActivity implements
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.emailCreateAccountButton) {
-            createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
+            createAccount(mEmailField.getText().toString(), mUserName.getText().toString(), mPasswordField.getText().toString());
         } else if (i == R.id.emailSignInButton) {
-            signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+            signIn(mEmailField.getText().toString(),mUserName.getText().toString(), mPasswordField.getText().toString());
         } else if (i == R.id.signOutButton) {
             signOut();
         } else if (i == R.id.verifyEmailButton) {

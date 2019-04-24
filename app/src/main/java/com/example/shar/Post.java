@@ -9,6 +9,7 @@ import java.util.Map;
 public class Post {
 
     private String mVideo;
+    //private String thumbnail;
 
 
     public Post(){}

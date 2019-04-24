@@ -16,13 +16,13 @@ public class DataBaseHelper {
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReferenceUserDatabase;
     private DatabaseReference mReferenceVideoDatatbase;
-    private List<Post> posts = new ArrayList<>();
+    private ArrayList<Post> posts = new ArrayList<>();
     private String mUID;
 
 
 
     public interface DataStatus{
-        boolean DataIsLoaded(List<Post> posts , List<String> keys);
+        boolean DataIsLoaded(ArrayList<Post> posts , ArrayList<String> keys);
         void DataIsInserted();
         void DataIsUploaded();
         void DataIsDeleted();
@@ -47,7 +47,7 @@ public class DataBaseHelper {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 posts.clear();
-                List<String> keys = new ArrayList<>();
+                ArrayList<String> keys = new ArrayList<>();
                 for(DataSnapshot keyNode : dataSnapshot.getChildren()){
                     keys.add(keyNode.getKey());
                     String url = keyNode.getValue(String.class);

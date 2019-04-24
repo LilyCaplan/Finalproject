@@ -4,6 +4,7 @@
     <string name="emailpassword_title_text">Email and Password</string>
     <string name="signed_out">Signed Out</string>
     <string name="hint_email">Email</string>
+    <string name = "hint_user_name">User Name</string>>
     <string name="hint_password">Password</string>
     <string name="sign_in">Sign In</string>
     <string name="create_account">Create Account</string>

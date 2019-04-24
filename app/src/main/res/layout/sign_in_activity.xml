@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/title_bottom_margin"
-            android:text="@string/emailpassword_title_text"
+            android:text="SHAR"
             android:theme="@style/ThemeOverlay.MyTitleText" />
 
         <TextView
@@ -33,6 +33,39 @@
             style="@style/ThemeOverlay.MyTextDetail"
             tools:text="Firebase User ID: 123456789abc" />
 
+        <LinearLayout
+            android:id="@+id/emailPasswordFields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <EditText
+                android:id="@+id/fieldEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:hint="@string/hint_email"
+                android:inputType="textEmailAddress" />
+            <EditText
+                android:id="@+id/fieldUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:hint="@string/hint_user_name"
+                android:inputType="textEmailAddress" />
+
+            <EditText
+                android:id="@+id/fieldPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:hint="@string/hint_password"
+                android:inputType="textPassword" />
+        </LinearLayout>
+
+
     </LinearLayout>
 
 
@@ -43,36 +76,11 @@
         android:background="@color/grey_300"
         android:gravity="center_vertical">
 
-        <LinearLayout
-            android:id="@+id/emailPasswordFields"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
-
-            <EditText
-                android:id="@+id/fieldEmail"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/hint_email"
-                android:inputType="textEmailAddress" />
-
-            <EditText
-                android:id="@+id/fieldPassword"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/hint_password"
-                android:inputType="textPassword" />
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/emailPasswordButtons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/emailPasswordFields"
             android:orientation="horizontal"
             android:paddingLeft="16dp"
             android:paddingRight="16dp">
