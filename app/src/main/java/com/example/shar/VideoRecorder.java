@@ -1,10 +1,13 @@
 package com.example.shar;
 
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Size;
@@ -22,6 +25,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -53,11 +57,15 @@ public class VideoRecorder {
     private Surface encoderSurface;
     private FirebaseStorage mStorage;
     private StorageReference mStorageRef;
+    private StorageReference mThumbnailStorageRef;
     private  StorageReference mVideoRef;
     private String mFileName;
     private String mUID;
     private URL mURL;
     private DatabaseReference mDatabase;
+    private String mUriVid = "";
+    private String mUriPhoto = "";
+
 
     private static final int[] FALLBACK_QUALITY_LEVELS = {
             CamcorderProfile.QUALITY_HIGH,
@@ -164,6 +172,8 @@ public class VideoRecorder {
 
     private void sendtoCloud(){
 
+
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         mFileName = videoBaseName + Long.toHexString(System.currentTimeMillis()) + ".mp4";
@@ -188,7 +198,8 @@ public class VideoRecorder {
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
-                    mDatabase.child(mUID).child("videos").push().setValue(downloadUri.toString());
+                    mUriVid = downloadUri.toString();
+
 
                 } else {
                     Log.d(TAG,"Shit's gone down");
@@ -196,6 +207,42 @@ public class VideoRecorder {
             }
         });
 
+        String thumbnailFileName = videoBaseName + Long.toHexString(System.currentTimeMillis()) + ".png";
+        mThumbnailStorageRef = mStorageRef.child(mUID + "/thumbnail/" + thumbnailFileName);
+
+        Bitmap bmp = ThumbnailUtils.createVideoThumbnail(videoPath.getPath(), MediaStore.Video.Thumbnails.MINI_KIND);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadThumnailTask = mThumbnailStorageRef.putBytes(data);
+
+        uploadThumnailTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d(TAG, "THIS IS A FUCK UP ");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Uri uri = taskSnapshot.getUploadSessionUri();
+                mUriPhoto = uri.toString();
+            }
+        });
+
+
+        if(!(mUriVid.isEmpty() && mUriPhoto.isEmpty())){
+            Post post = new Post(mUriVid, mUriPhoto);
+            mDatabase.child(mUID).child("posts").push().setValue(post);
+        } else {
+            mUriVid = urlTask.getResult().toString();
+            mUriPhoto =  uploadThumnailTask.getResult().toString();
+
+            Post post = new Post(mUriVid, mUriPhoto);
+            mDatabase.child(mUID).child("posts").push().setValue(post);
+
+        }
 
     }
 
@@ -210,7 +257,7 @@ public class VideoRecorder {
         // Stop recording
         mediaRecorder.stop();
         mediaRecorder.reset();
-        sendtoCloud();
+        //sendtoCloud();
     }
 
     private void setUpMediaRecorder() throws IOException {
@@ -269,4 +316,6 @@ public class VideoRecorder {
     public boolean isRecording() {
         return recordingVideoFlag;
     }
+
+    public String getvideoBaseName(){ return videoBaseName; }
 }

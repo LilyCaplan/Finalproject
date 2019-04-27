@@ -29,6 +29,7 @@ import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -38,7 +39,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
@@ -94,6 +99,10 @@ public class VideoRecordingActivity extends AppCompatActivity
     private EditText linkText;
 
     private Uri mUri;
+
+    private String mThumbnailUri;
+
+    private StorageReference mThumbnailStorageRef;
 
     public static final String KEY = "KEY";
 
@@ -211,7 +220,15 @@ public class VideoRecordingActivity extends AppCompatActivity
             values.put(MediaStore.Video.Media.DATA, videoPath);
             getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
 
-            //Post post = new Post();
+            Post post = new Post();
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+
+            sendVideoToCloud(videoRecorder.getVideoPath(), post);
+
+
+
+
+
 
 
             Intent intent = new Intent(this, PlayVideo.class);
@@ -221,6 +238,79 @@ public class VideoRecordingActivity extends AppCompatActivity
 
 
         }
+    }
+
+
+
+    private void sendVideoToCloud(File videoPath, Post post){
+
+
+        String mFileName = videoRecorder.getvideoBaseName() + Long.toHexString(System.currentTimeMillis()) + ".mp4";
+
+        Uri file = Uri.fromFile(videoPath);
+
+        StorageReference riversRef = mStorageRef.child(mUID + "/videos/" + mFileName);
+        UploadTask uploadTask = riversRef.putFile(file);
+
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+                // Continue with the task to get the download URL
+                return riversRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    sendThumbnailtoCloud(videoRecorder.getVideoPath(), post);
+                    mDatabase.child(mUID).child("videos").push().setValue(downloadUri);
+                    //post.setmVideo(downloadUri.toString());
+
+
+                } else {
+                    Log.d(TAG,"Shit's gone down");
+                }
+            }
+        });
+
+
+    }
+
+
+    private void sendThumbnailtoCloud(File videoPath, Post post){
+
+        String thumbnailFileName = videoRecorder.getvideoBaseName() + Long.toHexString(System.currentTimeMillis()) + ".png";
+
+        mThumbnailStorageRef = mStorageRef.child(mUID + "/thumbnail/" + thumbnailFileName);
+
+        Bitmap bmp = ThumbnailUtils.createVideoThumbnail(videoPath.getPath(), MediaStore.Video.Thumbnails.MINI_KIND);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadThumnailTask = mThumbnailStorageRef.putBytes(data);
+
+        uploadThumnailTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d(TAG, "THIS IS A FUCK UP ");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Uri uri = taskSnapshot.getUploadSessionUri();
+                mThumbnailUri = uri.toString();
+
+                //mDatabase.child(mUID).child("thumbnails").push().setValue(uri);
+            }
+        });
+
     }
 
     /**

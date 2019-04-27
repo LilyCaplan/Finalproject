@@ -145,7 +145,6 @@ public class SignInActivity extends AppCompatActivity implements
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
-                            mDatabase.child(user.getUid()).push().setValue(username);
 
                             Intent intent = new Intent(mContext, LinkLoader.class);
                             intent.putExtra(USER_KEY , user.getUid() );

@@ -1,6 +1,7 @@
 package com.example.shar;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,6 +22,7 @@ public class DataBaseHelper {
 
 
 
+
     public interface DataStatus{
         boolean DataIsLoaded(ArrayList<Post> posts , ArrayList<String> keys);
         void DataIsInserted();
@@ -38,11 +40,15 @@ public class DataBaseHelper {
         mUID = uID;
         mDatabase = FirebaseDatabase.getInstance();
         mReferenceUserDatabase = mDatabase.getReference(mUID);
-        mReferenceVideoDatatbase = mReferenceUserDatabase.child("videos");
+        mReferenceVideoDatatbase = mReferenceUserDatabase.child("posts");
+
 
     }
 
     public void readPosts(final DataStatus dataStatus){
+
+        Log.d("WE WANT TO STOP HERE" , "STOP THE MADDNESS");
+
         mReferenceVideoDatatbase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -50,8 +56,7 @@ public class DataBaseHelper {
                 ArrayList<String> keys = new ArrayList<>();
                 for(DataSnapshot keyNode : dataSnapshot.getChildren()){
                     keys.add(keyNode.getKey());
-                    String url = keyNode.getValue(String.class);
-                    Post post = new Post(url);
+                    Post post = keyNode.getValue(Post.class);
                     posts.add(post);
                 }
                 dataStatus.DataIsLoaded(posts, keys);

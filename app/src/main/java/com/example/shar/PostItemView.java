@@ -42,10 +42,7 @@ class PostItemView extends RecyclerView.ViewHolder{
     public void onBind(Post postObject, RequestManager requestManager) {
         this.requestManager = requestManager;
         parent.setTag(this);
-        // title.setText(mediaObject.getTitle());
-//            this.requestManager
-//                    .load(mediaObject.getThumbnail())
-//                    .into(thumbnail);
+        this.requestManager.load(postObject.getmThumbnail()).into(thumbnail);
     }
 
 

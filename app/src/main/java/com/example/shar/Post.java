@@ -9,13 +9,14 @@ import java.util.Map;
 public class Post {
 
     private String mVideo;
-    //private String thumbnail;
+    private String mThumbnail;
 
 
     public Post(){}
 
-    public Post(String video){
+    public Post(String video, String thumbnail){
         this.mVideo = video;
+        this.mThumbnail = thumbnail;
     }
 
 
@@ -23,7 +24,13 @@ public class Post {
         return mVideo;
     }
 
-    public void setmVideo(String str){ mVideo = str; }
+    public String getmThumbnail(){
+        return mThumbnail;
+    }
+
+    public void setmVideo(String str){ this.mVideo = str; }
+
+    public void  setmThumbnail(String str){ this.mThumbnail = str; }
 
 
 }
