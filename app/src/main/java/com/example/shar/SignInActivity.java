@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,6 +28,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.ArrayList;
+
 public class SignInActivity extends AppCompatActivity implements
         View.OnClickListener {
 
@@ -39,6 +43,8 @@ public class SignInActivity extends AppCompatActivity implements
     private Context mContext;
     private DatabaseReference mDatabase;
     public static final String USER_KEY = "USER_KEY";
+    public static final String KEY = "KEY";
+    private String mUID;
 
     // [START declare_auth]
     private FirebaseAuth mAuth;
@@ -105,7 +111,9 @@ public class SignInActivity extends AppCompatActivity implements
                             //String userID = user.getUid();
 
                             //mDatabase.child("users").child(userID).setValue(user);
-                            mDatabase.child(user.getUid()).push().setValue(username);
+                            mDatabase.child("username").push().setValue(username);
+
+
 
 
                             Intent intent = new Intent(mContext, LinkLoader.class);
@@ -145,7 +153,6 @@ public class SignInActivity extends AppCompatActivity implements
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
-                            mDatabase.child(user.getUid()).push().setValue(username);
 
                             Intent intent = new Intent(mContext, LinkLoader.class);
                             intent.putExtra(USER_KEY , user.getUid() );
@@ -177,37 +184,6 @@ public class SignInActivity extends AppCompatActivity implements
         updateUI(null);
     }
 
-    private void sendEmailVerification() {
-        // Disable button
-        findViewById(R.id.verifyEmailButton).setEnabled(false);
-
-        // Send verification email
-        // [START send_email_verification]
-        final FirebaseUser user = mAuth.getCurrentUser();
-        user.sendEmailVerification()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // [START_EXCLUDE]
-                        // Re-enable button
-                        findViewById(R.id.verifyEmailButton).setEnabled(true);
-
-                        if (task.isSuccessful()) {
-                            Toast.makeText(SignInActivity.this,
-                                    "Verification email sent to " + user.getEmail(),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e(TAG, "sendEmailVerification", task.getException());
-                            Toast.makeText(SignInActivity.this,
-                                    "Failed to send verification email.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        // [END_EXCLUDE]
-                    }
-                });
-        // [END send_email_verification]
-    }
-
     private boolean validateForm() {
         boolean valid = true;
 
@@ -224,7 +200,39 @@ public class SignInActivity extends AppCompatActivity implements
             mUserName.setError("Required.");
             valid = false;
         } else {
-            mUserName.setError(null);
+            DataBaseHelper dbh = new DataBaseHelper();
+            dbh.findUserNames(username, new DataBaseHelper.DataStatus() {
+                @Override
+                public void  DataIsLoaded(ArrayList<Post> posts, ArrayList<String> keys) {
+
+
+                }
+                @Override
+                public  void  DataIsLoaded(String username){
+                    if(username.isEmpty()){
+                        mUserName.setError(null);
+                    } else {
+                        mUserName.setError("Already Used");
+                    }
+
+                }
+
+                @Override
+                public void DataIsInserted() {
+
+                }
+
+                @Override
+                public void DataIsUploaded() {
+
+                }
+
+                @Override
+                public void DataIsDeleted() {
+
+                }
+            });
+
         }
 
         String password = mPasswordField.getText().toString();
@@ -236,6 +244,41 @@ public class SignInActivity extends AppCompatActivity implements
         }
 
         return valid;
+    }
+
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        Bundle extras;
+        mUID = "eKHB1xC2DVPUMdHkZxodG3Wj1NF3";
+        switch(item.getItemId()) {
+            case R.id.Feed:
+                intent = new Intent(this, FeedActivity.class);
+                intent.putExtra(KEY , mUID );
+                startActivity(intent);
+                break;
+            case R.id.Camera:
+                intent = new Intent(this, LinkLoader.class);
+                intent.putExtra(KEY , mUID );
+                startActivity(intent);
+                break;
+            case R.id.Profile:
+                intent = new Intent(this, PlayVideo.class);
+                intent.putExtra(KEY , mUID );
+                startActivity(intent);
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void updateUI(FirebaseUser user) {
@@ -269,8 +312,6 @@ public class SignInActivity extends AppCompatActivity implements
             signIn(mEmailField.getText().toString(),mUserName.getText().toString(), mPasswordField.getText().toString());
         } else if (i == R.id.signOutButton) {
             signOut();
-        } else if (i == R.id.verifyEmailButton) {
-            sendEmailVerification();
         }
     }
 }
