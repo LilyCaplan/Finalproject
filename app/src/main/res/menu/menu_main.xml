@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/Feed"
+        android:title="Feed"></item>
+    <item
+        android:id="@+id/Camera"
+        android:title="Camera"></item>
+    <item
+        android:id="@+id/Profile"
+        android:title="Profile"></item>
+</menu>

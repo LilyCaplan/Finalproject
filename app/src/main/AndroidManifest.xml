@@ -28,6 +28,7 @@ This tag indicates that this application requires ARCore. This results in the ap
         <activity android:name=".VideoRecordingActivity"></activity>
         <activity android:name=".PlayVideo"></activity>
         <activity android:name=".LinkLoader"></activity>
+        <activity android:name=".FeedActivity"></activity>
         <!--
  This tag indicates that this application requires ARCore. This results in the
     application only being visible in the Google Play Store on devices that support
