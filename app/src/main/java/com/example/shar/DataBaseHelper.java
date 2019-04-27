@@ -16,8 +16,10 @@ public class DataBaseHelper {
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReferenceUserDatabase;
     private DatabaseReference mReferenceVideoDatatbase;
+    private DatabaseReference mReferenceAllPostsDatabase;
     private ArrayList<Post> posts = new ArrayList<>();
     private String mUID;
+    private boolean mPoolUserData;
 
 
 
@@ -30,20 +32,46 @@ public class DataBaseHelper {
 
 
 
-    public DataBaseHelper() {
+
+    public DataBaseHelper(){
+        //mUID = uID;
+        mDatabase = FirebaseDatabase.getInstance();
+
 
     }
 
-    public DataBaseHelper(String uID){
-        mUID = uID;
-        mDatabase = FirebaseDatabase.getInstance();
+
+    public void setReferenceTarget(String publicPosts) {
+        mReferenceAllPostsDatabase = mDatabase.getReference(publicPosts);
+        mPoolUserData = false;
+
+    }
+
+
+    public void setReferenceTarget(String uid, String videos) {
+
         mReferenceUserDatabase = mDatabase.getReference(mUID);
         mReferenceVideoDatatbase = mReferenceUserDatabase.child("videos");
+        mPoolUserData = true;
+
 
     }
 
+
+
     public void readPosts(final DataStatus dataStatus){
-        mReferenceVideoDatatbase.addValueEventListener(new ValueEventListener() {
+        DatabaseReference database_ref;
+
+        if(mPoolUserData){
+            database_ref = mReferenceVideoDatatbase;
+        } else {
+            database_ref = mReferenceAllPostsDatabase;
+        }
+
+
+
+
+        database_ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 posts.clear();

@@ -33,6 +33,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -174,6 +176,46 @@ public class VideoRecordingActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_user, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        Bundle extras;
+        switch(item.getItemId()) {
+            case R.id.Feed:
+                intent = new Intent(this, FeedActivity.class);
+                extras = new Bundle();
+                extras.putString("USER_ID", mUID);
+                extras.putBoolean("PULL_USER_DATA", false);
+                intent.putExtras(extras);
+                startActivity(intent);
+                break;
+            case R.id.Camera:
+                intent = new Intent(this, VideoRecordingActivity.class);
+                extras = new Bundle();
+                extras.putString("USER_ID", mUID);
+                extras.putBoolean("PULL_USER_DATA", false );
+                intent.putExtras(extras);
+                startActivity(intent);
+                break;
+            case R.id.Profile:
+                intent = new Intent(this, PlayVideo.class);
+                extras = new Bundle();
+                extras.putString("USER_ID", mUID);
+                extras.putBoolean("PULL_USER_DATA", true );
+                intent.putExtras(extras);
+                startActivity(intent);
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onPause() {
         if (videoRecorder.isRecording()) {
             toggleRecording(null);
@@ -215,7 +257,11 @@ public class VideoRecordingActivity extends AppCompatActivity
 
 
             Intent intent = new Intent(this, PlayVideo.class);
-            intent.putExtra(KEY , mUID );
+            Bundle extras = new Bundle();
+            extras.putString("USER_ID", mUID);
+            extras.putBoolean("PULL_USER_DATA", true );
+            intent.putExtras(extras);
+            startActivity(intent);
             startActivity(intent);
 
 
