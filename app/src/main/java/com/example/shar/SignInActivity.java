@@ -28,6 +28,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.ArrayList;
+
 public class SignInActivity extends AppCompatActivity implements
         View.OnClickListener {
 
@@ -109,7 +111,8 @@ public class SignInActivity extends AppCompatActivity implements
                             //String userID = user.getUid();
 
                             //mDatabase.child("users").child(userID).setValue(user);
-                            mDatabase.child(user.getUid()).push().setValue(username);
+                            mDatabase.child("username").push().setValue(username);
+
 
 
 
@@ -150,7 +153,6 @@ public class SignInActivity extends AppCompatActivity implements
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
-                            mDatabase.child(user.getUid()).push().setValue(username);
 
                             Intent intent = new Intent(mContext, LinkLoader.class);
                             intent.putExtra(USER_KEY , user.getUid() );
@@ -182,37 +184,6 @@ public class SignInActivity extends AppCompatActivity implements
         updateUI(null);
     }
 
-    private void sendEmailVerification() {
-        // Disable button
-        findViewById(R.id.verifyEmailButton).setEnabled(false);
-
-        // Send verification email
-        // [START send_email_verification]
-        final FirebaseUser user = mAuth.getCurrentUser();
-        user.sendEmailVerification()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // [START_EXCLUDE]
-                        // Re-enable button
-                        findViewById(R.id.verifyEmailButton).setEnabled(true);
-
-                        if (task.isSuccessful()) {
-                            Toast.makeText(SignInActivity.this,
-                                    "Verification email sent to " + user.getEmail(),
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e(TAG, "sendEmailVerification", task.getException());
-                            Toast.makeText(SignInActivity.this,
-                                    "Failed to send verification email.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        // [END_EXCLUDE]
-                    }
-                });
-        // [END send_email_verification]
-    }
-
     private boolean validateForm() {
         boolean valid = true;
 
@@ -229,7 +200,39 @@ public class SignInActivity extends AppCompatActivity implements
             mUserName.setError("Required.");
             valid = false;
         } else {
-            mUserName.setError(null);
+            DataBaseHelper dbh = new DataBaseHelper();
+            dbh.findUserNames(username, new DataBaseHelper.DataStatus() {
+                @Override
+                public void  DataIsLoaded(ArrayList<Post> posts, ArrayList<String> keys) {
+
+
+                }
+                @Override
+                public  void  DataIsLoaded(String username){
+                    if(username.isEmpty()){
+                        mUserName.setError(null);
+                    } else {
+                        mUserName.setError("Already Used");
+                    }
+
+                }
+
+                @Override
+                public void DataIsInserted() {
+
+                }
+
+                @Override
+                public void DataIsUploaded() {
+
+                }
+
+                @Override
+                public void DataIsDeleted() {
+
+                }
+            });
+
         }
 
         String password = mPasswordField.getText().toString();
@@ -309,8 +312,6 @@ public class SignInActivity extends AppCompatActivity implements
             signIn(mEmailField.getText().toString(),mUserName.getText().toString(), mPasswordField.getText().toString());
         } else if (i == R.id.signOutButton) {
             signOut();
-        } else if (i == R.id.verifyEmailButton) {
-            sendEmailVerification();
         }
     }
 }

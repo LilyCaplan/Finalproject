@@ -103,14 +103,17 @@ public class PlayVideo extends AppCompatActivity {
 
         dbh.readPosts(new DataBaseHelper.DataStatus() {
             @Override
-            public boolean DataIsLoaded(ArrayList<Post> posts, ArrayList<String> keys) {
+            public void DataIsLoaded(ArrayList<Post> posts, ArrayList<String> keys) {
                 ArrayList<Post> mediaObjects = posts;
                 mRecyclerView.setMediaObjects(mediaObjects);
                 PostAdapter adapter = new PostAdapter(mediaObjects, initGlide());
                 mRecyclerView.setAdapter(adapter);
 
 
-                return  true;
+
+            }
+            @Override
+            public  void DataIsLoaded(String username){
 
             }
 
