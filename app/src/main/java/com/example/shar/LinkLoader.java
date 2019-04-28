@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,9 +20,13 @@ public class LinkLoader extends AppCompatActivity {
 
     private String mUID;
 
+    private String mUserName;
+
     private Context mContext;
 
-    public String LINKLOADER_KEY = "Link Loader CLass";
+    public static final String LINKLOADER_KEY = "Link Loader CLass";
+    public static final String USER_KEY = "USER_KEY";
+    public static final String USERNAME_KEY = "USERNAME_KEY";
 
     public static final String KEY = "KEY";
 
@@ -38,9 +43,9 @@ public class LinkLoader extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-
-
-        mUID = intent.getStringExtra(SignInActivity.USER_KEY);
+        mUID = intent.getExtras().getString(SignInActivity.USER_KEY);
+        mUserName = intent.getExtras().getString(SignInActivity.USERNAME_KEY);
+        Log.d(KEY, "THIS IS HERE");
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,8 +54,9 @@ public class LinkLoader extends AppCompatActivity {
 
                 Intent intent = new Intent(mContext, VideoRecordingActivity.class);
                 Bundle b = new Bundle();
-                b.putString("user", mUID);
-                b.putString("link" , link);
+                b.putString(USER_KEY, mUID);
+                b.putString(USERNAME_KEY, mUserName);
+                b.putString(LINKLOADER_KEY, link);
                 intent.putExtras(b);
                 startActivity(intent);
 

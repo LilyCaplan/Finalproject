@@ -42,18 +42,18 @@ public class DataBaseHelper {
         mUID = uID;
         mDatabase = FirebaseDatabase.getInstance();
         mReferenceUserDatabase = mDatabase.getReference(mUID);
-        mReferenceVideoDatatbase = mReferenceUserDatabase.child("videos");
+        mReferenceVideoDatatbase = mReferenceUserDatabase.child("posts");
 
     }
 
-    public void findUserNames(String username , final DataStatus dataStatus){
+    public void findUserNames(String username , String email,  final DataStatus dataStatus){
         mUserName = "";
         DatabaseReference referenceUserNames = mDatabase.getReference("username");
         referenceUserNames.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot keyNode : dataSnapshot.getChildren()){
-                    if(username.equals(keyNode.getValue(String.class))){
+                    if(username.equals(keyNode.child("mUsername").getValue(String.class)) && !(email.equals(keyNode.child("mEmail").getValue(String.class))) ){
                         mUserName = username;
                     }
                 }
@@ -79,8 +79,9 @@ public class DataBaseHelper {
                 ArrayList<String> keys = new ArrayList<>();
                 for(DataSnapshot keyNode : dataSnapshot.getChildren()){
                     keys.add(keyNode.getKey());
-                    String url = keyNode.getValue(String.class);
-                    Post post = new Post(url);
+                    String url = keyNode.child("mVideo").getValue(String.class);
+                    String username = keyNode.child("mText").getValue(String.class);
+                    Post post = new Post(url, username);
                     posts.add(post);
                 }
                 dataStatus.DataIsLoaded(posts, keys);

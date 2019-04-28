@@ -57,6 +57,7 @@ public class VideoRecorder {
     private String mFileName;
     private String mUID;
     private URL mURL;
+    private String mUserName;
     private DatabaseReference mDatabase;
 
     private static final int[] FALLBACK_QUALITY_LEVELS = {
@@ -188,7 +189,8 @@ public class VideoRecorder {
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
-                    mDatabase.child(mUID).child("videos").push().setValue(downloadUri.toString());
+                    Post post = new Post(downloadUri.toString(), mUserName);
+                    mDatabase.child(mUID).child("posts").push().setValue(post);
 
                 } else {
                     Log.d(TAG,"Shit's gone down");
@@ -197,6 +199,10 @@ public class VideoRecorder {
         });
 
 
+    }
+
+    public void setUserName(String username){
+        mUserName = username;
     }
 
     private void stopRecordingVideo() {

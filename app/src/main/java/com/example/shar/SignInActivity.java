@@ -42,9 +42,12 @@ public class SignInActivity extends AppCompatActivity implements
     private EditText mPasswordField;
     private Context mContext;
     private DatabaseReference mDatabase;
-    public static final String USER_KEY = "USER_KEY";
+
     public static final String KEY = "KEY";
+    public static final String USER_KEY = "USER_KEY";
+    public static final String USERNAME_KEY = "USERNAME_KEY";
     private String mUID;
+    private String mUsernameString;
 
     // [START declare_auth]
     private FirebaseAuth mAuth;
@@ -91,6 +94,8 @@ public class SignInActivity extends AppCompatActivity implements
     // [END on_start_check_user]
 
     private void createAccount(String email, String username,  String password) {
+
+
         Log.d(TAG, "createAccount:" + email);
         if (!validateForm()) {
             return;
@@ -109,15 +114,22 @@ public class SignInActivity extends AppCompatActivity implements
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                             //String userID = user.getUid();
+                            mUID = user.getUid();
+                            User usernameObj = new User(mUID, username, email);
 
                             //mDatabase.child("users").child(userID).setValue(user);
-                            mDatabase.child("username").push().setValue(username);
+                            mDatabase.child("username").push().setValue(usernameObj);
+
+                            mUsernameString = username;
 
 
 
 
                             Intent intent = new Intent(mContext, LinkLoader.class);
-                            intent.putExtra(USER_KEY , user.getUid() );
+                            Bundle b = new Bundle();
+                            b.putString(USER_KEY , user.getUid());
+                            b.putString(USERNAME_KEY ,mUsernameString);
+                            intent.putExtras(b);
                             startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -134,6 +146,7 @@ public class SignInActivity extends AppCompatActivity implements
                 });
         // [END create_user_with_email]
     }
+
 
     private void signIn(String email, String username, String password) {
         Log.d(TAG, "signIn:" + email);
@@ -153,9 +166,13 @@ public class SignInActivity extends AppCompatActivity implements
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+                            mUsernameString = username;
 
                             Intent intent = new Intent(mContext, LinkLoader.class);
-                            intent.putExtra(USER_KEY , user.getUid() );
+                            Bundle b = new Bundle();
+                            b.putString(USER_KEY , user.getUid());
+                            b.putString(USERNAME_KEY , username);
+                            intent.putExtras(b);
                             startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -200,8 +217,9 @@ public class SignInActivity extends AppCompatActivity implements
             mUserName.setError("Required.");
             valid = false;
         } else {
+
             DataBaseHelper dbh = new DataBaseHelper();
-            dbh.findUserNames(username, new DataBaseHelper.DataStatus() {
+            dbh.findUserNames(username, email, new DataBaseHelper.DataStatus() {
                 @Override
                 public void  DataIsLoaded(ArrayList<Post> posts, ArrayList<String> keys) {
 
@@ -212,7 +230,9 @@ public class SignInActivity extends AppCompatActivity implements
                     if(username.isEmpty()){
                         mUserName.setError(null);
                     } else {
+
                         mUserName.setError("Already Used");
+
                     }
 
                 }
@@ -232,7 +252,7 @@ public class SignInActivity extends AppCompatActivity implements
 
                 }
             });
-
+            mUserName.setError(null);
         }
 
         String password = mPasswordField.getText().toString();
@@ -263,17 +283,26 @@ public class SignInActivity extends AppCompatActivity implements
         switch(item.getItemId()) {
             case R.id.Feed:
                 intent = new Intent(this, FeedActivity.class);
-                intent.putExtra(KEY , mUID );
+                extras = new Bundle();
+                extras.putString(USER_KEY , mUID);
+                extras.putString(USERNAME_KEY ,mUsernameString);
+                intent.putExtras(extras);
                 startActivity(intent);
                 break;
             case R.id.Camera:
                 intent = new Intent(this, LinkLoader.class);
-                intent.putExtra(KEY , mUID );
+                extras = new Bundle();
+                extras.putString(USER_KEY , mUID);
+                extras.putString(USERNAME_KEY ,mUsernameString);
+                intent.putExtras(extras);
                 startActivity(intent);
                 break;
             case R.id.Profile:
                 intent = new Intent(this, PlayVideo.class);
-                intent.putExtra(KEY , mUID );
+                extras = new Bundle();
+                extras.putString(USER_KEY , mUID);
+                extras.putString(USERNAME_KEY ,mUsernameString);
+                intent.putExtras(extras);
                 startActivity(intent);
                 break;
 
