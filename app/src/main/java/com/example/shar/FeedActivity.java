@@ -37,6 +37,10 @@ public class FeedActivity extends AppCompatActivity {
         mUID  = intent.getStringExtra(USER_KEY);
         mUserName = intent.getStringExtra(USERNAME_KEY);
 
+        mRecyclerView = findViewById(R.id.recycler_view);
+
+        initRecyclerView();
+
 
 
 
@@ -87,14 +91,14 @@ public class FeedActivity extends AppCompatActivity {
     private void initRecyclerView(){
 
 
-        DataBaseHelper dbh = new DataBaseHelper(mUID);
+        DataBaseHelper dbh = new DataBaseHelper();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         //VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
         //mRecyclerView.addItemDecoration(itemDecorator);
 
-        dbh.readPosts(new DataBaseHelper.DataStatus() {
+        dbh.readAllPosts(new DataBaseHelper.DataStatus() {
             @Override
             public void DataIsLoaded(ArrayList<Post> posts, ArrayList<String> keys) {
                 ArrayList<Post> mediaObjects = posts;

@@ -48,6 +48,8 @@ public class SignInActivity extends AppCompatActivity implements
     public static final String USERNAME_KEY = "USERNAME_KEY";
     private String mUID;
     private String mUsernameString;
+    private boolean mAlreadyUsedUserName;
+    private boolean mHasFinishedChecking;
 
     // [START declare_auth]
     private FirebaseAuth mAuth;
@@ -62,6 +64,7 @@ public class SignInActivity extends AppCompatActivity implements
 
         mContext = this;
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mHasFinishedChecking = false;
 
         // Views
         mStatusTextView = findViewById(R.id.status);
@@ -228,8 +231,11 @@ public class SignInActivity extends AppCompatActivity implements
                 @Override
                 public  void  DataIsLoaded(String username){
                     if(username.isEmpty()){
+                        mAlreadyUsedUserName = false;
                         mUserName.setError(null);
                     } else {
+                        mAlreadyUsedUserName = true;
+                        mHasFinishedChecking = true;
 
                         mUserName.setError("Already Used");
 
@@ -252,7 +258,7 @@ public class SignInActivity extends AppCompatActivity implements
 
                 }
             });
-            mUserName.setError(null);
+            //mUserName.setError(null);
         }
 
         String password = mPasswordField.getText().toString();
@@ -263,7 +269,18 @@ public class SignInActivity extends AppCompatActivity implements
             mPasswordField.setError(null);
         }
 
-        return valid;
+        if(mAlreadyUsedUserName){
+            return false;
+        }
+
+        if(mHasFinishedChecking){
+            return valid;
+        } else {
+            return false;
+        }
+
+
+
     }
 
 

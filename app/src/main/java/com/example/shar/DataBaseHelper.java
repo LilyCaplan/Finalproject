@@ -71,6 +71,31 @@ public class DataBaseHelper {
 
     }
 
+    public void readAllPosts(final DataStatus dataStatus){
+        DatabaseReference referenceAllPosts = mDatabase.getReference("allposts");
+        referenceAllPosts.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                posts.clear();
+                ArrayList<String> keys = new ArrayList<>();
+                for(DataSnapshot keyNode : dataSnapshot.getChildren()){
+                    keys.add(keyNode.getKey());
+                    String url = keyNode.child("mVideo").getValue(String.class);
+                    String username = keyNode.child("mText").getValue(String.class);
+                    Post post = new Post(url, username);
+                    posts.add(post);
+                }
+                dataStatus.DataIsLoaded(posts, keys);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
     public void readPosts(final DataStatus dataStatus){
         mReferenceVideoDatatbase.addValueEventListener(new ValueEventListener() {
             @Override

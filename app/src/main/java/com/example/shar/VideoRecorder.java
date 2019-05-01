@@ -191,6 +191,7 @@ public class VideoRecorder {
                     Uri downloadUri = task.getResult();
                     Post post = new Post(downloadUri.toString(), mUserName);
                     mDatabase.child(mUID).child("posts").push().setValue(post);
+                    mDatabase.child("allposts").push().setValue(post);
 
                 } else {
                     Log.d(TAG,"Shit's gone down");
