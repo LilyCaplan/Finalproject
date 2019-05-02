@@ -235,13 +235,13 @@ public class SignInActivity extends AppCompatActivity implements
                         mUserName.setError(null);
                     } else {
                         mAlreadyUsedUserName = true;
-                        mHasFinishedChecking = true;
-
                         mUserName.setError("Already Used");
 
                     }
+                    mHasFinishedChecking = true;
 
                 }
+
 
                 @Override
                 public void DataIsInserted() {

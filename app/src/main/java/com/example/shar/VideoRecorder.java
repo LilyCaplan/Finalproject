@@ -189,7 +189,7 @@ public class VideoRecorder {
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
-                    Post post = new Post(downloadUri.toString(), mUserName);
+                    Post post = new Post(downloadUri.toString(), mUserName, mUID);
                     mDatabase.child(mUID).child("posts").push().setValue(post);
                     mDatabase.child("allposts").push().setValue(post);
 

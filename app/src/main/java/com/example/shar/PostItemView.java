@@ -51,5 +51,9 @@ class PostItemView extends RecyclerView.ViewHolder{
 //                    .into(thumbnail);
     }
 
+    public void setOnClickListener(){
+
+    }
+
 
 }
