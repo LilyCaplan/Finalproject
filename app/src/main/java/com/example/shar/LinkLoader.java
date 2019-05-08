@@ -82,17 +82,27 @@ public class LinkLoader extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.Feed:
                 intent = new Intent(this, FeedActivity.class);
-                intent.putExtra(KEY , mUID );
+                extras = new Bundle();
+                extras.putString("USER_KEY" , mUID);
+                extras.putString( "USERNAME_KEY" , mUserName);
+                intent.putExtras(extras);
                 startActivity(intent);
                 break;
             case R.id.Camera:
                 intent = new Intent(this, LinkLoader.class);
-                intent.putExtra(KEY , mUID );
+                extras = new Bundle();
+                extras.putString("USER_KEY" , mUID);
+                extras.putString( "USERNAME_KEY" , mUserName);
+                intent.putExtras(extras);
                 startActivity(intent);
                 break;
             case R.id.Profile:
                 intent = new Intent(this, PlayVideo.class);
                 intent.putExtra(KEY , mUID );
+                extras = new Bundle();
+                extras.putString("USER_KEY" , mUID);
+                extras.putString( "USERNAME_KEY" , mUserName);
+                intent.putExtras(extras);
                 startActivity(intent);
                 break;
 

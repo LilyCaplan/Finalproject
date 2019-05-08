@@ -83,7 +83,8 @@ public class DataBaseHelper {
                     String url = keyNode.child("mVideo").getValue(String.class);
                     String username = keyNode.child("mText").getValue(String.class);
                     String uid = keyNode.child("mUID").getValue(String.class);
-                    Post post = new Post(url, username, uid);
+                    String thumbnail = keyNode.child("mThumbnail").getValue(String.class);
+                    Post post = new Post(url, username, uid, thumbnail);
                     posts.add(post);
                 }
                 dataStatus.DataIsLoaded(posts, keys);
@@ -108,7 +109,8 @@ public class DataBaseHelper {
                     String url = keyNode.child("mVideo").getValue(String.class);
                     String username = keyNode.child("mText").getValue(String.class);
                     String uid = keyNode.child("mUID").getValue(String.class);
-                    Post post = new Post(url, username, uid);
+                    String thumbnail = keyNode.child("mThumbnail").getValue(String.class);
+                    Post post = new Post(url, username, uid, thumbnail);
                     posts.add(post);
                 }
                 dataStatus.DataIsLoaded(posts, keys);

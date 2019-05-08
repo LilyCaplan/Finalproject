@@ -11,15 +11,16 @@ public class Post {
     private String mVideo;
     private String mText;
     private String mUID;
-    //private String thumbnail;
+    private String mThumbnail;
 
 
     public Post(){}
 
-    public Post(String video, String text, String uid){
+    public Post(String video, String text, String uid, String thumbnail){
         this.mVideo = video;
         this.mText = text;
         this.mUID = uid;
+        this.mThumbnail = thumbnail;
     }
 
 
@@ -34,6 +35,8 @@ public class Post {
     public String getmText(){ return mText; }
 
     public String getmUID(){ return mUID; }
+
+    public String getmThumbnail() { return mThumbnail; }
 
 
 }

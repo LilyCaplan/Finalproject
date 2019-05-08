@@ -43,6 +43,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -53,7 +54,7 @@ public class PostRecyclerView extends RecyclerView {
     private enum VolumeState {ON, OFF};
 
     // ui
-    private ImageView thumbnail, volumeControl;
+    private ImageView thumbnail, volumeControl, close;
     private ProgressBar progressBar;
     private TextView textView;
     private View viewHolderParent;
