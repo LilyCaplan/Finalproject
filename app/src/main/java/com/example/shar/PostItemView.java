@@ -22,11 +22,18 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static android.view.View.VISIBLE;
 
@@ -40,6 +47,9 @@ class PostItemView extends RecyclerView.ViewHolder{
     View parent;
     RequestManager requestManager;
     String generatedPath;
+    ImageView close;
+    private PostAdapter mPostAdapterRef;
+
 
     private String key;
 
@@ -53,6 +63,8 @@ class PostItemView extends RecyclerView.ViewHolder{
         thumbnail = itemView.findViewById(R.id.thumbnail);
         progressBar = itemView.findViewById(R.id.progressBar);
         volumeControl = itemView.findViewById(R.id.volume_control);
+        close = itemView.findViewById(R.id.close);
+
 
 
 
@@ -63,11 +75,12 @@ class PostItemView extends RecyclerView.ViewHolder{
         parent.setTag(this);
         title.setText(postObject.getmText());
         String str = postObject.getmThumbnail();
+        String userID = findUserName(str);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
 // Creating a reference to the link
         StorageReference httpsReference = storage.getReference();
-        StorageReference user = httpsReference.child(findUserName(str));
+        StorageReference user = httpsReference.child(userID);
         StorageReference thumb = user.child("thumbnail");
         StorageReference pic = thumb.child(findFileName(str));
 
@@ -89,23 +102,39 @@ class PostItemView extends RecyclerView.ViewHolder{
             }
         });
 
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeItem(getAdapterPosition());
+                DataBaseHelper dbh = new DataBaseHelper();
+                dbh.removePosts(userID, str, new DataBaseHelper.DataStatus(){
+                    @Override
+                    public void DataIsLoaded(ArrayList<Post> posts, ArrayList<String> keys) {
 
-//
-//
-//        RequestOptions options = new RequestOptions()
-//                .placeholder(R.drawable.white_background)
-//                .error(R.drawable.white_background);
-//
-//
-//
-//
-       // Picasso.get().load(str).into(thumbnail);
-        //thumbnail.setVisibility(VISIBLE);
+                    }
+                    @Override
+                    public  void DataIsLoaded(String username){
 
+                    }
 
+                    @Override
+                    public void DataIsInserted() {
 
+                    }
 
-        //this.requestManager.load(httpsReference).into(thumbnail);
+                    @Override
+                    public void DataIsUploaded() {
+
+                    }
+
+                    @Override
+                    public void DataIsDeleted() {
+
+                    }
+                });
+            }
+
+        });
 
 
 
@@ -167,6 +196,15 @@ class PostItemView extends RecyclerView.ViewHolder{
         }
         return finalStr;
 
+    }
+
+    public void removeItem(int position){
+        mPostAdapterRef.remove(position);
+        mPostAdapterRef.notifyItemRemoved(position);
+    }
+
+    public void setAdapterReference(PostAdapter ps){
+        this.mPostAdapterRef = ps;
     }
 
 

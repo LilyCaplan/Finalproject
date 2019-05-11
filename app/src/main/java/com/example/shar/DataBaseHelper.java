@@ -124,5 +124,47 @@ public class DataBaseHelper {
 
     }
 
+    public void removePosts(String uid, String thumbnailRef ,final DataStatus dataStatus){
+        DatabaseReference userRef = mDatabase.getReference(uid).child("posts");
+        DatabaseReference allpostRef = mDatabase.getReference("allposts");
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot keyNode : dataSnapshot.getChildren()){
+                    if(keyNode.child("mThumbnail").getValue(String.class).equals(thumbnailRef)){
+                        keyNode.getRef().removeValue();
+
+                    }
+                }
+                dataStatus.DataIsDeleted();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        allpostRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot keyNode : dataSnapshot.getChildren()){
+                    if(keyNode.child("mThumbnail").getValue(String.class).equals(thumbnailRef)){
+                        keyNode.getRef().removeValue();
+
+                    }
+                }
+                dataStatus.DataIsDeleted();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 
 }

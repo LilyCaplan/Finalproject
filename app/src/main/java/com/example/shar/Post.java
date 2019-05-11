@@ -12,6 +12,7 @@ public class Post {
     private String mText;
     private String mUID;
     private String mThumbnail;
+    //private String postKeyVal;
 
 
     public Post(){}
@@ -21,6 +22,7 @@ public class Post {
         this.mText = text;
         this.mUID = uid;
         this.mThumbnail = thumbnail;
+        //this.postKeyVal = keyval;
     }
 
 
@@ -37,6 +39,8 @@ public class Post {
     public String getmUID(){ return mUID; }
 
     public String getmThumbnail() { return mThumbnail; }
+
+    //public String getPostKeyVal() {return  postKeyVal;}
 
 
 }

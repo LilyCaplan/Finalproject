@@ -44,6 +44,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -293,10 +294,14 @@ public class PostRecyclerView extends RecyclerView {
         }
 
         PostItemView holder = (PostItemView) child.getTag();
+
         if (holder == null) {
             playPosition = -1;
             return;
         }
+
+        holder.close.setVisibility(INVISIBLE);
+        close = holder.close;
         thumbnail = holder.thumbnail;
         progressBar = holder.progressBar;
         volumeControl = holder.volumeControl;
@@ -318,6 +323,10 @@ public class PostRecyclerView extends RecyclerView {
                 viewHolderParent.getContext().startActivity(intent);
             }
         });
+
+        if(mediaObjects.get(targetPosition).getmUID().equals(FirebaseAuth.getInstance().getUid())){
+            close.setVisibility(VISIBLE);
+        }
 
         viewHolderParent.setOnClickListener(videoViewClickListener);
 
