@@ -241,8 +241,10 @@ public class SignInActivity extends AppCompatActivity implements
                     mHasFinishedChecking = true;
 
                 }
+                @Override
+                public void DataFound(String username){
 
-
+                }
                 @Override
                 public void DataIsInserted() {
 

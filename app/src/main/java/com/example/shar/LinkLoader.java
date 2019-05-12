@@ -98,7 +98,6 @@ public class LinkLoader extends AppCompatActivity {
                 break;
             case R.id.Profile:
                 intent = new Intent(this, PlayVideo.class);
-                intent.putExtra(KEY , mUID );
                 extras = new Bundle();
                 extras.putString("USER_KEY" , mUID);
                 extras.putString( "USERNAME_KEY" , mUserName);

@@ -26,6 +26,7 @@ public class DataBaseHelper {
     public interface DataStatus{
         void DataIsLoaded(ArrayList<Post> posts , ArrayList<String> keys);
         void DataIsLoaded(String userName);
+        void DataFound(String userName);
         void DataIsInserted();
         void DataIsUploaded();
         void DataIsDeleted();
@@ -156,6 +157,31 @@ public class DataBaseHelper {
                     }
                 }
                 dataStatus.DataIsDeleted();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void getUserNamefromUID(String uid, final DataStatus dataStatus){
+        DatabaseReference userNameRef = mDatabase.getReference("username");
+
+        userNameRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot keyNode : dataSnapshot.getChildren()){
+                    String tempUser = keyNode.child("mUID").getValue(String.class);
+                    if(tempUser.equals(uid)){
+                        String username = keyNode.child("mUsername").getValue(String.class);
+                        dataStatus.DataFound(username);
+
+                    }
+                }
+
             }
 
             @Override

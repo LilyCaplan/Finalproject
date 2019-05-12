@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
 
@@ -73,6 +74,39 @@ public class PlayVideo extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
         Bundle extras;
+        if(!mUID.equals(FirebaseAuth.getInstance().getUid())){
+            mUID = FirebaseAuth.getInstance().getUid();
+            DataBaseHelper dbh = new DataBaseHelper();
+            dbh.getUserNamefromUID(mUID, new DataBaseHelper.DataStatus() {
+                @Override
+                public void DataIsLoaded(ArrayList<Post> posts, ArrayList<String> keys) {
+
+                }
+                @Override
+                public  void DataIsLoaded(String username){
+
+                }
+                @Override
+                public void DataFound(String username){
+                    mUserName = username;
+                }
+
+                @Override
+                public void DataIsInserted() {
+
+                }
+
+                @Override
+                public void DataIsUploaded() {
+
+                }
+
+                @Override
+                public void DataIsDeleted() {
+
+                }
+            });
+        }
         switch(item.getItemId()) {
             case R.id.Feed:
                 intent = new Intent(this, FeedActivity.class);
@@ -92,11 +126,11 @@ public class PlayVideo extends AppCompatActivity {
                 break;
             case R.id.Profile:
                 intent = new Intent(this, PlayVideo.class);
-                intent.putExtra(KEY , mUID );
                 extras = new Bundle();
                 extras.putString("USER_KEY" , mUID);
                 extras.putString( "USERNAME_KEY" , mUserName);
                 intent.putExtras(extras);
+                startActivity(intent);
                 break;
 
         }
@@ -110,6 +144,7 @@ public class PlayVideo extends AppCompatActivity {
         DataBaseHelper dbh = new DataBaseHelper(mUID);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        //mRecyclerView.resetInit();
         mRecyclerView.setLayoutManager(layoutManager);
         //VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
         //mRecyclerView.addItemDecoration(itemDecorator);
@@ -129,7 +164,9 @@ public class PlayVideo extends AppCompatActivity {
             public  void DataIsLoaded(String username){
 
             }
-
+            @Override
+            public void DataFound(String username){
+            }
             @Override
             public void DataIsInserted() {
 

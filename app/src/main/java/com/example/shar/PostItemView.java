@@ -117,7 +117,10 @@ class PostItemView extends RecyclerView.ViewHolder{
                     public  void DataIsLoaded(String username){
 
                     }
+                    @Override
+                    public  void DataFound(String username){
 
+                    }
                     @Override
                     public void DataIsInserted() {
 
@@ -144,9 +147,6 @@ class PostItemView extends RecyclerView.ViewHolder{
 
 
     }
-
-    //https://firebasestorage.googleapis.com/v0/b/shar-2abcd.appspot.com/o?name=Pq2chsQ0n5agTtZQubAEJgOnTDF2%2Fthumbnail%2FSample16a898f999f.png&uploadType=resumable&upload_id=AEnB2Uo0n-X5vZAEaELiy2OfdbTDDPBKXsDkBkHH4KxlxUapqJY5RPYTQBFBueSJ4sQRcQvtR5eWdE7xY5Ti6nP8OfrZ7ANQZDy8mZzapaHQDVJkPnsstlA&upload_protocol=resumable
-
 
     public String findUserName(String str){
         String temp;

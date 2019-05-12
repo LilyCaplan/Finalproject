@@ -42,9 +42,6 @@ public class FeedActivity extends AppCompatActivity {
         initRecyclerView();
 
 
-
-
-
     }
 
     @Override
@@ -111,6 +108,10 @@ public class FeedActivity extends AppCompatActivity {
             }
             @Override
             public  void DataIsLoaded(String username){
+
+            }
+            @Override
+            public void DataFound(String username){
 
             }
 

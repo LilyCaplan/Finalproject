@@ -89,7 +89,7 @@ public class PostRecyclerView extends RecyclerView {
     }
 
 
-    private void init(Context context){
+   private void init(Context context){
         this.context = context.getApplicationContext();
         Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         Point point = new Point();
