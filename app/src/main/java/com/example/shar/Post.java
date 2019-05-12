@@ -9,13 +9,20 @@ import java.util.Map;
 public class Post {
 
     private String mVideo;
-    //private String thumbnail;
+    private String mText;
+    private String mUID;
+    private String mThumbnail;
+    //private String postKeyVal;
 
 
     public Post(){}
 
-    public Post(String video){
+    public Post(String video, String text, String uid, String thumbnail){
         this.mVideo = video;
+        this.mText = text;
+        this.mUID = uid;
+        this.mThumbnail = thumbnail;
+        //this.postKeyVal = keyval;
     }
 
 
@@ -24,6 +31,16 @@ public class Post {
     }
 
     public void setmVideo(String str){ mVideo = str; }
+
+    public void setmText(String str) { mText = str; }
+
+    public String getmText(){ return mText; }
+
+    public String getmUID(){ return mUID; }
+
+    public String getmThumbnail() { return mThumbnail; }
+
+    //public String getPostKeyVal() {return  postKeyVal;}
 
 
 }

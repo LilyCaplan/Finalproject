@@ -42,18 +42,18 @@ public class DataBaseHelper {
         mUID = uID;
         mDatabase = FirebaseDatabase.getInstance();
         mReferenceUserDatabase = mDatabase.getReference(mUID);
-        mReferenceVideoDatatbase = mReferenceUserDatabase.child("videos");
+        mReferenceVideoDatatbase = mReferenceUserDatabase.child("posts");
 
     }
 
-    public void findUserNames(String username , final DataStatus dataStatus){
+    public void findUserNames(String username , String email,  final DataStatus dataStatus){
         mUserName = "";
         DatabaseReference referenceUserNames = mDatabase.getReference("username");
         referenceUserNames.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot keyNode : dataSnapshot.getChildren()){
-                    if(username.equals(keyNode.getValue(String.class))){
+                    if(username.equals(keyNode.child("mUsername").getValue(String.class)) && !(email.equals(keyNode.child("mEmail").getValue(String.class))) ){
                         mUserName = username;
                     }
                 }
@@ -71,6 +71,33 @@ public class DataBaseHelper {
 
     }
 
+    public void readAllPosts(final DataStatus dataStatus){
+        DatabaseReference referenceAllPosts = mDatabase.getReference("allposts");
+        referenceAllPosts.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                posts.clear();
+                ArrayList<String> keys = new ArrayList<>();
+                for(DataSnapshot keyNode : dataSnapshot.getChildren()){
+                    keys.add(keyNode.getKey());
+                    String url = keyNode.child("mVideo").getValue(String.class);
+                    String username = keyNode.child("mText").getValue(String.class);
+                    String uid = keyNode.child("mUID").getValue(String.class);
+                    String thumbnail = keyNode.child("mThumbnail").getValue(String.class);
+                    Post post = new Post(url, username, uid, thumbnail);
+                    posts.add(post);
+                }
+                dataStatus.DataIsLoaded(posts, keys);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
     public void readPosts(final DataStatus dataStatus){
         mReferenceVideoDatatbase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -79,11 +106,56 @@ public class DataBaseHelper {
                 ArrayList<String> keys = new ArrayList<>();
                 for(DataSnapshot keyNode : dataSnapshot.getChildren()){
                     keys.add(keyNode.getKey());
-                    String url = keyNode.getValue(String.class);
-                    Post post = new Post(url);
+                    String url = keyNode.child("mVideo").getValue(String.class);
+                    String username = keyNode.child("mText").getValue(String.class);
+                    String uid = keyNode.child("mUID").getValue(String.class);
+                    String thumbnail = keyNode.child("mThumbnail").getValue(String.class);
+                    Post post = new Post(url, username, uid, thumbnail);
                     posts.add(post);
                 }
                 dataStatus.DataIsLoaded(posts, keys);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void removePosts(String uid, String thumbnailRef ,final DataStatus dataStatus){
+        DatabaseReference userRef = mDatabase.getReference(uid).child("posts");
+        DatabaseReference allpostRef = mDatabase.getReference("allposts");
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot keyNode : dataSnapshot.getChildren()){
+                    if(keyNode.child("mThumbnail").getValue(String.class).equals(thumbnailRef)){
+                        keyNode.getRef().removeValue();
+
+                    }
+                }
+                dataStatus.DataIsDeleted();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        allpostRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot keyNode : dataSnapshot.getChildren()){
+                    if(keyNode.child("mThumbnail").getValue(String.class).equals(thumbnailRef)){
+                        keyNode.getRef().removeValue();
+
+                    }
+                }
+                dataStatus.DataIsDeleted();
             }
 
             @Override

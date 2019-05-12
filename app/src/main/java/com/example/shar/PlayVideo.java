@@ -23,6 +23,7 @@ import java.util.ArrayList;
 public class PlayVideo extends AppCompatActivity {
 
     private String mUID;
+    private String mUserName;
     private DatabaseReference mDatabase;
 
     private Context mContext;
@@ -38,6 +39,8 @@ public class PlayVideo extends AppCompatActivity {
     private ArrayList<String> mKeys;
 
     public static final String KEY = "KEY";
+    public static final String USER_KEY = "USER_KEY";
+    public static final String USERNAME_KEY = "USERNAME_KEY";
 
 
 
@@ -52,8 +55,9 @@ public class PlayVideo extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recycler_view);
 
         Intent intent = getIntent();
-        String message = intent.getStringExtra(VideoRecordingActivity.KEY);
-        mUID = message;
+        mUID  = intent.getStringExtra(USER_KEY);
+        mUserName = intent.getStringExtra(USERNAME_KEY);
+
 
         initRecyclerView();
 
@@ -72,18 +76,27 @@ public class PlayVideo extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.Feed:
                 intent = new Intent(this, FeedActivity.class);
-                intent.putExtra(KEY , mUID );
+                extras = new Bundle();
+                extras.putString("USER_KEY" , mUID);
+                extras.putString( "USERNAME_KEY" , mUserName);
+                intent.putExtras(extras);
                 startActivity(intent);
                 break;
             case R.id.Camera:
                 intent = new Intent(this, LinkLoader.class);
-                intent.putExtra(KEY , mUID );
+                extras = new Bundle();
+                extras.putString("USER_KEY" , mUID);
+                extras.putString( "USERNAME_KEY" , mUserName);
+                intent.putExtras(extras);
                 startActivity(intent);
                 break;
             case R.id.Profile:
                 intent = new Intent(this, PlayVideo.class);
                 intent.putExtra(KEY , mUID );
-                startActivity(intent);
+                extras = new Bundle();
+                extras.putString("USER_KEY" , mUID);
+                extras.putString( "USERNAME_KEY" , mUserName);
+                intent.putExtras(extras);
                 break;
 
         }

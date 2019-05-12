@@ -1,10 +1,13 @@
 package com.example.shar;
 
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Size;
@@ -22,8 +25,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -57,7 +62,13 @@ public class VideoRecorder {
     private String mFileName;
     private String mUID;
     private URL mURL;
+    private String mUserName;
     private DatabaseReference mDatabase;
+    private StorageReference mThumbnailStorageRef;
+    private Uri mThumbnailURI;
+    private Uri mVideoUri;
+    private String mThumbnailHasLoaded;
+    private String mUniqueTime;
 
     private static final int[] FALLBACK_QUALITY_LEVELS = {
             CamcorderProfile.QUALITY_HIGH,
@@ -164,9 +175,13 @@ public class VideoRecorder {
 
     private void sendtoCloud(){
 
+        mThumbnailHasLoaded = "not loaded";
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        mFileName = videoBaseName + Long.toHexString(System.currentTimeMillis()) + ".mp4";
+        mUniqueTime = Long.toHexString(System.currentTimeMillis());
+
+        mFileName = videoBaseName + mUniqueTime + ".mp4";
 
         Uri file = Uri.fromFile(videoPath);
 
@@ -187,8 +202,8 @@ public class VideoRecorder {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
-                    Uri downloadUri = task.getResult();
-                    mDatabase.child(mUID).child("videos").push().setValue(downloadUri.toString());
+                    mVideoUri = task.getResult();
+                    sendThumbnailtoCloud();
 
                 } else {
                     Log.d(TAG,"Shit's gone down");
@@ -197,6 +212,41 @@ public class VideoRecorder {
         });
 
 
+    }
+
+    private void sendThumbnailtoCloud(){
+
+        String thumbnailFileName = videoBaseName + mUniqueTime + ".png";
+
+        mThumbnailStorageRef = mStorageRef.child(mUID + "/thumbnail/" + thumbnailFileName);
+
+        Bitmap bmp = ThumbnailUtils.createVideoThumbnail(videoPath.getPath(), MediaStore.Video.Thumbnails.MINI_KIND);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadThumnailTask = mThumbnailStorageRef.putBytes(data);
+
+        uploadThumnailTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d(TAG, "THIS IS A FUCK UP ");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                mThumbnailURI = taskSnapshot.getUploadSessionUri();
+                Post post = new Post(mVideoUri.toString(), mUserName, mUID, mThumbnailURI.toString());
+                mDatabase.child(mUID).child("posts").push().setValue(post);
+                mDatabase.child("allposts").push().setValue(post);
+            }
+        });
+
+    }
+
+    public void setUserName(String username){
+        mUserName = username;
     }
 
     private void stopRecordingVideo() {

@@ -31,6 +31,7 @@ class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+        ((PostItemView)viewHolder).setAdapterReference(this);
         ((PostItemView)viewHolder).onBind(postObjects.get(i), requestManager);
     }
 
@@ -38,5 +39,11 @@ class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int getItemCount() {
         return postObjects.size();
     }
+
+    public void remove(int position){
+        postObjects.remove(position);
+    }
+
+
 
 }

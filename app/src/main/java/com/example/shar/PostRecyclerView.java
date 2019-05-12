@@ -2,8 +2,10 @@ package com.example.shar;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +19,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.RequestManager;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -40,6 +43,8 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -50,8 +55,9 @@ public class PostRecyclerView extends RecyclerView {
     private enum VolumeState {ON, OFF};
 
     // ui
-    private ImageView thumbnail, volumeControl;
+    private ImageView thumbnail, volumeControl, close;
     private ProgressBar progressBar;
+    private TextView textView;
     private View viewHolderParent;
     private FrameLayout frameLayout;
     private PlayerView videoSurfaceView;
@@ -68,6 +74,9 @@ public class PostRecyclerView extends RecyclerView {
 
     // controlling playback state
     private VolumeState volumeState;
+
+    public static final String USER_KEY = "USER_KEY";
+    public static final String USERNAME_KEY = "USERNAME_KEY";
 
     public PostRecyclerView(@NonNull Context context) {
         super(context);
@@ -285,18 +294,39 @@ public class PostRecyclerView extends RecyclerView {
         }
 
         PostItemView holder = (PostItemView) child.getTag();
+
         if (holder == null) {
             playPosition = -1;
             return;
         }
+
+        holder.close.setVisibility(INVISIBLE);
+        close = holder.close;
         thumbnail = holder.thumbnail;
         progressBar = holder.progressBar;
         volumeControl = holder.volumeControl;
         viewHolderParent = holder.itemView;
         requestManager = holder.requestManager;
+        textView = holder.title;
         frameLayout = holder.itemView.findViewById(R.id.media_container);
 
         videoSurfaceView.setPlayer(videoPlayer);
+
+        textView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(viewHolderParent.getContext(), PlayVideo.class);
+                Bundle b = new Bundle();
+                b.putString(USER_KEY, mediaObjects.get(targetPosition).getmUID());
+                b.putString(USERNAME_KEY, mediaObjects.get(targetPosition).getmText());
+                intent.putExtras(b);
+                viewHolderParent.getContext().startActivity(intent);
+            }
+        });
+
+        if(mediaObjects.get(targetPosition).getmUID().equals(FirebaseAuth.getInstance().getUid())){
+            close.setVisibility(VISIBLE);
+        }
 
         viewHolderParent.setOnClickListener(videoViewClickListener);
 

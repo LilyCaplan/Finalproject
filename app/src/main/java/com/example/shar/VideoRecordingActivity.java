@@ -97,7 +97,11 @@ public class VideoRecordingActivity extends AppCompatActivity
 
     private Uri mUri;
 
+    private String mUserName;
+
     public static final String KEY = "KEY";
+    public static final String USER_KEY = "USER_KEY";
+    public static final String USERNAME_KEY = "USERNAME_KEY";
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
@@ -117,8 +121,10 @@ public class VideoRecordingActivity extends AppCompatActivity
         //StorageReference imagesRef = mStorageRef.child("images");
         Intent intent = getIntent();
 
-        mUID = intent.getExtras().getString("user");
-        String link = intent.getExtras().getString("link");
+        mUID = intent.getExtras().getString(USER_KEY);
+        mUserName = intent.getExtras().getString(USERNAME_KEY);
+        String link = intent.getExtras().getString(LinkLoader.LINKLOADER_KEY);
+
         if( link.isEmpty()){
             mUri = Uri.parse("https://poly.googleusercontent.com/downloads/0BnDT3T1wTE/85QOHCZOvov/Mesh_Beagle.gltf");
 
@@ -164,6 +170,7 @@ public class VideoRecordingActivity extends AppCompatActivity
 
         videoRecorder.setStorageRef(mStorage);
         videoRecorder.setUserID(mUID);
+        videoRecorder.setUserName(mUserName);
 
         int orientation = getResources().getConfiguration().orientation;
         videoRecorder.setVideoQuality(CamcorderProfile.QUALITY_2160P, orientation);
@@ -188,17 +195,26 @@ public class VideoRecordingActivity extends AppCompatActivity
         switch(item.getItemId()) {
             case R.id.Feed:
                 intent = new Intent(this, FeedActivity.class);
-                intent.putExtra(KEY , mUID );
+                extras = new Bundle();
+                extras.putString(USER_KEY , mUID);
+                extras.putString(USERNAME_KEY , mUserName);
+                intent.putExtras(extras);
                 startActivity(intent);
                 break;
             case R.id.Camera:
                 intent = new Intent(this, LinkLoader.class);
-                intent.putExtra(KEY , mUID );
+                extras = new Bundle();
+                extras.putString(USER_KEY, mUID);
+                extras.putString( USERNAME_KEY , mUserName);
+                intent.putExtras(extras);
                 startActivity(intent);
                 break;
             case R.id.Profile:
                 intent = new Intent(this, PlayVideo.class);
-                intent.putExtra(KEY , mUID );
+                extras = new Bundle();
+                extras.putString(USER_KEY, mUID);
+                extras.putString( USERNAME_KEY , mUserName);
+                intent.putExtras(extras);
                 startActivity(intent);
                 break;
 
@@ -248,7 +264,10 @@ public class VideoRecordingActivity extends AppCompatActivity
 
 
             Intent intent = new Intent(this, PlayVideo.class);
-            intent.putExtra(KEY , mUID );
+            Bundle extras = new Bundle();
+            extras.putString("USER_KEY" , mUID);
+            extras.putString( "USERNAME_KEY" , mUserName);
+            intent.putExtras(extras);
             startActivity(intent);
 
 
