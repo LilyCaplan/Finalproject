@@ -300,7 +300,7 @@ public class PostRecyclerView extends RecyclerView {
             return;
         }
 
-        holder.close.setVisibility(INVISIBLE);
+
         close = holder.close;
         thumbnail = holder.thumbnail;
         progressBar = holder.progressBar;
@@ -324,9 +324,6 @@ public class PostRecyclerView extends RecyclerView {
             }
         });
 
-        if(mediaObjects.get(targetPosition).getmUID().equals(FirebaseAuth.getInstance().getUid())){
-            close.setVisibility(VISIBLE);
-        }
 
         viewHolderParent.setOnClickListener(videoViewClickListener);
 

@@ -64,6 +64,7 @@ class PostItemView extends RecyclerView.ViewHolder{
         progressBar = itemView.findViewById(R.id.progressBar);
         volumeControl = itemView.findViewById(R.id.volume_control);
         close = itemView.findViewById(R.id.close);
+        close.setVisibility(View.INVISIBLE);
 
 
 
@@ -135,6 +136,10 @@ class PostItemView extends RecyclerView.ViewHolder{
             }
 
         });
+
+        if(postObject.getmUID().equals(FirebaseAuth.getInstance().getUid())){
+            close.setVisibility(VISIBLE);
+        }
 
 
 
