@@ -28,7 +28,6 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 
 /**
@@ -58,16 +57,13 @@ public class VideoRecorder {
     private Surface encoderSurface;
     private FirebaseStorage mStorage;
     private StorageReference mStorageRef;
-    private  StorageReference mVideoRef;
     private String mFileName;
     private String mUID;
-    private URL mURL;
     private String mUserName;
     private DatabaseReference mDatabase;
     private StorageReference mThumbnailStorageRef;
     private Uri mThumbnailURI;
     private Uri mVideoUri;
-    private String mThumbnailHasLoaded;
     private String mUniqueTime;
 
     private static final int[] FALLBACK_QUALITY_LEVELS = {
@@ -175,7 +171,6 @@ public class VideoRecorder {
 
     private void sendtoCloud(){
 
-        mThumbnailHasLoaded = "not loaded";
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 

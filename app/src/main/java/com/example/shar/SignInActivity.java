@@ -194,7 +194,7 @@ public class SignInActivity extends AppCompatActivity implements
                 });
         // [END sign_in_with_email]
     }
-    
+
 
     private boolean validateForm() {
         boolean valid = true;

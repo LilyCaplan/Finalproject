@@ -132,6 +132,11 @@ public class PlayVideo extends AppCompatActivity {
                 intent.putExtras(extras);
                 startActivity(intent);
                 break;
+            case R.id.SignOut:
+                FirebaseAuth.getInstance().signOut();
+                intent = new Intent(this, SignInActivity.class);
+                startActivity(intent);
+                break;
 
         }
         return super.onOptionsItemSelected(item);
