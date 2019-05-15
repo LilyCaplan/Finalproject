@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:weightSum="100"
     android:id="@+id/parent"
-    android:background="#383434">
+    android:background="@color/dark_gray_background">
 
     <TextView
         android:id="@+id/title"
