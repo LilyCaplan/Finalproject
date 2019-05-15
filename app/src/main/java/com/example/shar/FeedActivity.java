@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -77,6 +78,11 @@ public class FeedActivity extends AppCompatActivity {
                 extras.putString("USER_KEY" , mUID);
                 extras.putString( "USERNAME_KEY" , mUserName);
                 intent.putExtras(extras);
+                startActivity(intent);
+                break;
+            case R.id.SignOut:
+                FirebaseAuth.getInstance().signOut();
+                intent = new Intent(this, SignInActivity.class);
                 startActivity(intent);
                 break;
 

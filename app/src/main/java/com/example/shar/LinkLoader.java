@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class LinkLoader extends AppCompatActivity {
 
     private Button addButton;
@@ -102,6 +104,11 @@ public class LinkLoader extends AppCompatActivity {
                 extras.putString("USER_KEY" , mUID);
                 extras.putString( "USERNAME_KEY" , mUserName);
                 intent.putExtras(extras);
+                startActivity(intent);
+                break;
+            case R.id.SignOut:
+                FirebaseAuth.getInstance().signOut();
+                intent = new Intent(this, SignInActivity.class);
                 startActivity(intent);
                 break;
 
