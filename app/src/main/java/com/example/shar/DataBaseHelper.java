@@ -192,5 +192,15 @@ public class DataBaseHelper {
 
     }
 
+    public void sendVideoandThumbnail(Post post, String uid){
+        this.mUID = uid;
+        DatabaseReference mDatabaseRef = mDatabase.getReference();
+        mReferenceUserDatabase = mDatabase.getReference(mUID);
+
+        mReferenceUserDatabase.child("posts").push().setValue(post);
+        mDatabaseRef.child("allposts").push().setValue(post);
+
+    }
+
 
 }

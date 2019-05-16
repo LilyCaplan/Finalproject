@@ -77,13 +77,14 @@ class PostItemView extends RecyclerView.ViewHolder{
         title.setText(postObject.getmText());
         String str = postObject.getmThumbnail();
         String userID = findUserName(str);
+        String thumbFileName = findFileName(str);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
 // Creating a reference to the link
         StorageReference httpsReference = storage.getReference();
         StorageReference user = httpsReference.child(userID);
         StorageReference thumb = user.child("thumbnail");
-        StorageReference pic = thumb.child(findFileName(str));
+        StorageReference pic = thumb.child(thumbFileName);
 
         pic.getDownloadUrl().addOnCompleteListener( new OnCompleteListener<Uri>() {
             @Override
@@ -136,6 +137,13 @@ class PostItemView extends RecyclerView.ViewHolder{
 
                     }
                 });
+
+
+                String videoFileName = findVideoFilename(postObject.getmVideo());
+                StorageHelper sh = new StorageHelper(userID,videoFileName ,thumbFileName );
+                sh.deleteFromStorage();
+
+
             }
 
         });
@@ -210,6 +218,34 @@ class PostItemView extends RecyclerView.ViewHolder{
 
     public void setAdapterReference(PostAdapter ps){
         this.mPostAdapterRef = ps;
+    }
+
+    public String findVideoFilename(String str){
+        String temp;
+        for (int i =0; i<str.length()-9; i++){
+            temp = str.substring(i, i+9);
+            if(temp.equals("videos%2F"))
+                return extractVideoFileName(str, i+9);
+
+
+        }
+        return "";
+
+    }
+
+    public String extractVideoFileName(String str, int index){
+        String finalStr = "";
+        for(int i = index; i< str.length()-4; i++){
+            if(str.substring(i, i+4).equals(".mp4")){
+                return finalStr + ".mp4";
+            } else {
+                finalStr += str.charAt(i);
+            }
+
+
+        }
+        return finalStr;
+
     }
 
 

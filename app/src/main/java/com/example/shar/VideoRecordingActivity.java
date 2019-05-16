@@ -69,7 +69,7 @@ public class VideoRecordingActivity extends AppCompatActivity
     private static final double MIN_OPENGL_VERSION = 3.0;
 
     private WritingArFragment arFragment;
-    private ModelRenderable andyRenderable;
+    private ModelRenderable mRenderable;
     // Model loader class to avoid leaking the activity context.
     private ModelLoader modelLoader;
 
@@ -148,7 +148,7 @@ public class VideoRecordingActivity extends AppCompatActivity
 
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-                    if (andyRenderable == null) {
+                    if (mRenderable == null) {
                         return;
                     }
 
@@ -161,7 +161,7 @@ public class VideoRecordingActivity extends AppCompatActivity
                     // Create the transformable andy and add it to the anchor.
                     TransformableNode andy = new TransformableNode(arFragment.getTransformationSystem());
                     andy.setParent(anchorNode);
-                    andy.setRenderable(andyRenderable);
+                    andy.setRenderable(mRenderable);
                     andy.select();
                 });
 
@@ -306,7 +306,7 @@ public class VideoRecordingActivity extends AppCompatActivity
 
     @Override
     public void setRenderable(ModelRenderable modelRenderable) {
-        andyRenderable = modelRenderable;
+        mRenderable = modelRenderable;
     }
 
     @Override
