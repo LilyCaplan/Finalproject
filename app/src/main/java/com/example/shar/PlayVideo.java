@@ -25,21 +25,7 @@ public class PlayVideo extends AppCompatActivity {
 
     private String mUID;
     private String mUserName;
-    private DatabaseReference mDatabase;
-
-    private Context mContext;
-    public String TAG = "com.example.shar.PlayVideo";
-    private LinearLayoutManager mLinearLayoutManager;
-
-
     private PostRecyclerView mRecyclerView;
-
-
-
-    private ArrayList<Post> mPosts;
-    private ArrayList<String> mKeys;
-
-    public static final String KEY = "KEY";
     public static final String USER_KEY = "USER_KEY";
     public static final String USERNAME_KEY = "USERNAME_KEY";
 

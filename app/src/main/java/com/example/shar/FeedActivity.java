@@ -17,7 +17,6 @@ import java.util.ArrayList;
 
 public class FeedActivity extends AppCompatActivity {
 
-    public static final String KEY = "KEY";
     public static final String USER_KEY = "USER_KEY";
     public static final String USERNAME_KEY = "USERNAME_KEY";
     private String mUID;
@@ -140,6 +139,12 @@ public class FeedActivity extends AppCompatActivity {
 
 
     }
+
+    /**
+     *
+     * create default thumnail
+     *
+     * */
 
     private RequestManager initGlide(){
         RequestOptions options = new RequestOptions()

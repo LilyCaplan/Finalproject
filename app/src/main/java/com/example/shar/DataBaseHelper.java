@@ -39,6 +39,11 @@ public class DataBaseHelper {
 
     }
 
+    /**
+    * inputs: userid
+    * Creates specific post database reference for specific user
+    * */
+
     public DataBaseHelper(String uID){
         mUID = uID;
         mDatabase = FirebaseDatabase.getInstance();
@@ -46,6 +51,14 @@ public class DataBaseHelper {
         mReferenceVideoDatatbase = mReferenceUserDatabase.child("posts");
 
     }
+
+    /**
+     *
+     * inputs: username, email, datastatuc
+     * looks up specific username if it's been used
+     * @retuns username if it's been taken by someone via DataStatus
+     *
+     * */
 
     public void findUserNames(String username , String email,  final DataStatus dataStatus){
         mUserName = "";
@@ -72,6 +85,13 @@ public class DataBaseHelper {
 
     }
 
+    /**
+     * inputs: DataStatus
+     * returns posts for public feed
+     * @returns array of posts via datastatus
+     *
+     *
+     * */
     public void readAllPosts(final DataStatus dataStatus){
         DatabaseReference referenceAllPosts = mDatabase.getReference("allposts");
         referenceAllPosts.addValueEventListener(new ValueEventListener() {
@@ -99,6 +119,13 @@ public class DataBaseHelper {
 
     }
 
+    /**
+     * inputs: DataStatus
+     * returns posts for profile
+     * @returns array of posts via datastatus
+     *
+     *
+     * */
     public void readPosts(final DataStatus dataStatus){
         mReferenceVideoDatatbase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -124,6 +151,14 @@ public class DataBaseHelper {
         });
 
     }
+
+    /**
+     * inputs: uid, thumbnail, datastatus
+     *
+     * removes posts that user would like to delete
+     *
+     *
+     * */
 
     public void removePosts(String uid, String thumbnailRef ,final DataStatus dataStatus){
         DatabaseReference userRef = mDatabase.getReference(uid).child("posts");
@@ -167,6 +202,14 @@ public class DataBaseHelper {
 
     }
 
+
+    /**
+     * inputs: uid,  datastatus
+     *
+     * finds user from clicking on their name in feed
+     *
+     *
+     * */
     public void getUserNamefromUID(String uid, final DataStatus dataStatus){
         DatabaseReference userNameRef = mDatabase.getReference("username");
 
@@ -189,6 +232,23 @@ public class DataBaseHelper {
 
             }
         });
+
+    }
+
+    /**
+     * inputs: post, uid
+     *
+     * send posts to database
+     *
+     * */
+
+    public void sendVideoandThumbnail(Post post, String uid){
+        this.mUID = uid;
+        DatabaseReference mDatabaseRef = mDatabase.getReference();
+        mReferenceUserDatabase = mDatabase.getReference(mUID);
+
+        mReferenceUserDatabase.child("posts").push().setValue(post);
+        mDatabaseRef.child("allposts").push().setValue(post);
 
     }
 

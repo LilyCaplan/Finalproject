@@ -12,17 +12,19 @@ public class Post {
     private String mText;
     private String mUID;
     private String mThumbnail;
-    //private String postKeyVal;
 
 
     public Post(){}
+
+    /**
+     * creates post of videos, thumnail, and username for reference
+     * */
 
     public Post(String video, String text, String uid, String thumbnail){
         this.mVideo = video;
         this.mText = text;
         this.mUID = uid;
         this.mThumbnail = thumbnail;
-        //this.postKeyVal = keyval;
     }
 
 
@@ -40,7 +42,6 @@ public class Post {
 
     public String getmThumbnail() { return mThumbnail; }
 
-    //public String getPostKeyVal() {return  postKeyVal;}
 
 
 }

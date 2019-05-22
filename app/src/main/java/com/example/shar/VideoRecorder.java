@@ -55,15 +55,10 @@ public class VideoRecorder {
     private int bitRate = DEFAULT_BITRATE;
     private int frameRate = DEFAULT_FRAMERATE;
     private Surface encoderSurface;
-    private FirebaseStorage mStorage;
-    private StorageReference mStorageRef;
-    private String mFileName;
+    private String mVideoFileName;
+    private String mThumbnailFileName;
     private String mUID;
     private String mUserName;
-    private DatabaseReference mDatabase;
-    private StorageReference mThumbnailStorageRef;
-    private Uri mThumbnailURI;
-    private Uri mVideoUri;
     private String mUniqueTime;
 
     private static final int[] FALLBACK_QUALITY_LEVELS = {
@@ -96,7 +91,7 @@ public class VideoRecorder {
 
     public  void setUserID(String uID) { mUID = uID; }
 
-    public  void setStorageRef( FirebaseStorage storage ) { mStorageRef= storage.getReference();};
+    //public  void setStorageRef( FirebaseStorage storage ) { mStorageRef= storage.getReference();};
 
     /**
      * Toggles the state of video recording.
@@ -120,7 +115,7 @@ public class VideoRecorder {
         try {
             buildFilename();
             setUpMediaRecorder();
-            setUpFireBaseStorage();
+            //setUpFireBaseStorage();
 
 
         } catch (IOException e) {
@@ -137,11 +132,7 @@ public class VideoRecorder {
         recordingVideoFlag = true;
     }
 
-    private void setUpFireBaseStorage(){
-        mStorage = FirebaseStorage.getInstance();
-        mStorageRef = mStorage.getReference();
 
-    }
 
     private void buildFilename() {
 
@@ -166,79 +157,14 @@ public class VideoRecorder {
 
     }
 
-
-
-
-    private void sendtoCloud(){
-
-
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
+    private void createFileNames(){
         mUniqueTime = Long.toHexString(System.currentTimeMillis());
-
-        mFileName = videoBaseName + mUniqueTime + ".mp4";
-
-        Uri file = Uri.fromFile(videoPath);
-
-        StorageReference riversRef = mStorageRef.child(mUID + "/videos/" + mFileName);
-        UploadTask uploadTask = riversRef.putFile(file);
-
-        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-            @Override
-            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                if (!task.isSuccessful()) {
-                    throw task.getException();
-                }
-
-                // Continue with the task to get the download URL
-                return riversRef.getDownloadUrl();
-            }
-        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                if (task.isSuccessful()) {
-                    mVideoUri = task.getResult();
-                    sendThumbnailtoCloud();
-
-                } else {
-                    Log.d(TAG,"Shit's gone down");
-                }
-            }
-        });
-
+        mVideoFileName = videoBaseName + mUniqueTime + ".mp4";
+        mThumbnailFileName = videoBaseName + mUniqueTime + ".png";
 
     }
 
-    private void sendThumbnailtoCloud(){
 
-        String thumbnailFileName = videoBaseName + mUniqueTime + ".png";
-
-        mThumbnailStorageRef = mStorageRef.child(mUID + "/thumbnail/" + thumbnailFileName);
-
-        Bitmap bmp = ThumbnailUtils.createVideoThumbnail(videoPath.getPath(), MediaStore.Video.Thumbnails.MINI_KIND);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] data = baos.toByteArray();
-
-        UploadTask uploadThumnailTask = mThumbnailStorageRef.putBytes(data);
-
-        uploadThumnailTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.d(TAG, "THIS IS A FUCK UP ");
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                mThumbnailURI = taskSnapshot.getUploadSessionUri();
-                Post post = new Post(mVideoUri.toString(), mUserName, mUID, mThumbnailURI.toString());
-                mDatabase.child(mUID).child("posts").push().setValue(post);
-                mDatabase.child("allposts").push().setValue(post);
-            }
-        });
-
-    }
 
     public void setUserName(String username){
         mUserName = username;
@@ -255,7 +181,11 @@ public class VideoRecorder {
         // Stop recording
         mediaRecorder.stop();
         mediaRecorder.reset();
-        sendtoCloud();
+
+        //create files and send them to storage
+        createFileNames();
+        StorageHelper sh = new StorageHelper(videoPath, mUID, mUserName, mVideoFileName, mThumbnailFileName);
+        sh.send();
     }
 
     private void setUpMediaRecorder() throws IOException {
