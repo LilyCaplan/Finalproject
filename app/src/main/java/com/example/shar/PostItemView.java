@@ -51,7 +51,11 @@ class PostItemView extends RecyclerView.ViewHolder{
     private PostAdapter mPostAdapterRef;
 
 
-    private String key;
+
+    /**
+     * turns post data into views
+     *
+     * */
 
     public PostItemView(@NonNull View itemView)  {
         super(itemView);

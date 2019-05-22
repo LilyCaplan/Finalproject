@@ -32,7 +32,9 @@ public class WritingArFragment extends ArFragment {
                 == PackageManager.PERMISSION_GRANTED;
     }
 
-    /** Launch Application Setting to grant permissions. */
+    /***
+     * Launch Application Setting to grant permissions.
+     *  */
     public void launchPermissionSettings() {
         Intent intent = new Intent();
         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);

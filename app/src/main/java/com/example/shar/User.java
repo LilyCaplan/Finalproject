@@ -7,6 +7,11 @@ public class User {
     private String mEmail;
 
 
+    /**
+     *
+     * user object to be put in database
+     * */
+
     public User(String uid, String username , String email){
         this.mUID = uid;
         this.mUsername = username;

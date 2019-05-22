@@ -48,6 +48,12 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+
+/**
+ * enables posts to be in a scrollable view and allows for videos to be played when scrolled specifically on them
+ *
+ * */
+
 public class PostRecyclerView extends RecyclerView {
 
     private static final String TAG = "VideoPlayerRecyclerView";

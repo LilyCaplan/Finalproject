@@ -37,9 +37,13 @@ public class StorageHelper {
 
     public String TAG = "StorageHelper";
 
+    /**
+     * Sends videos and pictures to storage
+     *
+     * */
+
     StorageHelper(File videoPath, String uid, String username, String videofileName, String thumbnailFileName){
 
-        //mDatabase = FirebaseDatabase.getInstance().getReference();
         mStorage = FirebaseStorage.getInstance();
         mStorageRef = mStorage.getReference();
 
@@ -94,7 +98,6 @@ public class StorageHelper {
 
     private void sendThumbnailtoCloud(){
 
-        //String thumbnailFileName = videoBaseName + mUniqueTime + ".png";
 
         mThumbnailStorageRef = mStorageRef.child(mUID + "/thumbnail/" + mThumbnailFileName);
 

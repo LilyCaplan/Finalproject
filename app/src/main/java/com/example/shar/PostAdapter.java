@@ -9,9 +9,13 @@ import com.bumptech.glide.RequestManager;
 
 import java.util.ArrayList;
 
+/**
+ * adaptes post objects to postitemviews
+ *
+ * */
+
 class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    //        private ArrayList<Post> mPosts;
-//        private ArrayList<String> mKeys;
+
     private ArrayList<Post> postObjects;
     private RequestManager requestManager;
 

@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
  * prevents the Activity or Fragment from being garbage collected, which can leak the memory
  * permanently if the reference is held in the singleton scope.
  *
- * <p>To avoid this, use a non-nested class which is not an activity nor fragment. Hold a weak
+ * To avoid this, use a non-nested class which is not an activity nor fragment. Hold a weak
  * reference to the activity or fragment and use that when making calls affecting the UI.
  */
 @SuppressWarnings({"AndroidApiChecker"})
@@ -36,7 +36,9 @@ public class ModelLoader {
      * {@link ModelLoaderCallbacks#setRenderable(ModelRenderable)} or {@link
      * ModelLoaderCallbacks#onLoadException(Throwable)} (Throwable)}.
      *
-     * @param resourceId the resource id of the .sfb to load.
+     * takes in a resource string to create dynamic model at runtime
+     *
+     *
      * @return true if loading was initiated.
      */
     boolean loadModel(Context context, Uri resourceId) {

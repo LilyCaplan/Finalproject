@@ -35,27 +35,21 @@ public class SignInActivity extends AppCompatActivity implements
 
     private static final String TAG = "EmailPassword";
 
-    private TextView mStatusTextView;
-    private TextView mDetailTextView;
     private EditText mEmailField;
     private EditText mUserName;
     private EditText mPasswordField;
     private Context mContext;
     private DatabaseReference mDatabase;
 
-    public static final String KEY = "KEY";
     public static final String USER_KEY = "USER_KEY";
     public static final String USERNAME_KEY = "USERNAME_KEY";
     private String mUID;
     private String mUsernameString;
     private boolean mAlreadyUsedUserName;
     private boolean mHasFinishedChecking;
-
-    // [START declare_auth]
     private FirebaseAuth mAuth;
-    // [END declare_auth]
 
-    private FirebaseStorage mStorage;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,22 +69,17 @@ public class SignInActivity extends AppCompatActivity implements
         findViewById(R.id.emailSignInButton).setOnClickListener(this);
         findViewById(R.id.emailCreateAccountButton).setOnClickListener(this);
 
-        // [START initialize_auth]
-        // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        // [END initialize_auth]
-        //mStorage = FirebaseStorage.getInstance();
     }
 
-    // [START on_start_check_user]
+
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        //updateUI(currentUser);
+
     }
-    // [END on_start_check_user]
+
 
     private void createAccount(String email, String username,  String password) {
 
@@ -100,23 +89,16 @@ public class SignInActivity extends AppCompatActivity implements
             return;
         }
 
-        //showProgressDialog();
-
-        // [START create_user_with_email]
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
-                            //String userID = user.getUid();
                             mUID = user.getUid();
                             User usernameObj = new User(mUID, username, email);
 
-                            //mDatabase.child("users").child(userID).setValue(user);
                             mDatabase.child("username").push().setValue(usernameObj);
 
                             mUsernameString = username;
@@ -131,19 +113,14 @@ public class SignInActivity extends AppCompatActivity implements
                             intent.putExtras(b);
                             startActivity(intent);
                         } else {
-                            // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(SignInActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
                         }
 
-                        // [START_EXCLUDE]
-                        //hideProgressDialog();
-                        // [END_EXCLUDE]
                     }
                 });
-        // [END create_user_with_email]
+
     }
 
 
@@ -153,18 +130,13 @@ public class SignInActivity extends AppCompatActivity implements
             return;
         }
 
-        //showProgressDialog();
-
-        // [START sign_in_with_email]
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
                             mUsernameString = username;
 
                             Intent intent = new Intent(mContext, LinkLoader.class);
@@ -174,25 +146,16 @@ public class SignInActivity extends AppCompatActivity implements
                             intent.putExtras(b);
                             startActivity(intent);
                         } else {
-                            // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(SignInActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
 
 
 
                         }
 
-                        // [START_EXCLUDE]
-                        if (!task.isSuccessful()) {
-                            mStatusTextView.setText(R.string.auth_failed);
-                        }
-                        //hideProgressDialog();
-                        // [END_EXCLUDE]
                     }
                 });
-        // [END sign_in_with_email]
     }
 
 

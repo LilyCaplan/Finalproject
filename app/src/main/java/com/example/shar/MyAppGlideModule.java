@@ -14,6 +14,10 @@ import java.io.InputStream;
 @GlideModule
 public class MyAppGlideModule extends AppGlideModule {
 
+    /**
+     * enables ability to instantiate thumbnails on firebase
+     * */
+
     @Override
     public void registerComponents(Context context, Glide glide, Registry registry) {
         // Register FirebaseImageLoader to handle StorageReference
